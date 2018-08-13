@@ -1,0 +1,13 @@
+batch
+
+/subsystem=elytron/key-store=qsKeyStore:add(path=server-keystore.jks,relative-to=jboss.server.config.dir,type=JKS,credential-reference={clear-text=secret})
+/subsystem=elytron/key-store=qsTrustStore:add(path=client-truststore.jks,relative-to=jboss.server.config.dir,type=JKS,credential-reference={clear-text=secret})
+/subsystem=elytron/key-manager=qsKeyManager:add(key-store=qsKeyStore,credential-reference={clear-text=secret})
+/subsystem=elytron/trust-manager=qsTrustManager:add(key-store=qsTrustStore)
+/subsystem=elytron/server-ssl-context=qsSSLContext:add(key-manager=qsKeyManager,trust-manager=qsTrustManager,protocols=[TLSv1.2],need-client-auth=true)
+/subsystem=undertow/server=default-server/https-listener=https:undefine-attribute(name=security-realm)
+/subsystem=undertow/server=default-server/https-listener=https:write-attribute(name=ssl-context,value=qsSSLContext)
+
+run-batch
+
+reload

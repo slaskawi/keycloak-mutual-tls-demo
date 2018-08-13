@@ -1,0 +1,25 @@
+= Keycloak Mutual TLS for Clients Demo
+
+This demo will show you how to use the X509 Client Authenticator.
+
+== Demo flow
+
+* At first, compile your own Keycloak version (this feature has not been released yet).
+* Generate certificates and keystores using `scripts/create_certs.sh` file.
+* Copy `scripts/*` into `$KEYCLOAK_HOME/standalone/configuration`.
+* Configure Mututal TLS using `cli/configure-tls.cli` script (`jboss-cli.sh --connect --file=configure-tls.cli`).
+* Create a new Client in the Keycloak UI with X509 Certificate
+* For Subject DN use: `CN=localhost, OU=Keycloak, O=JBoss, L=Red Hat, ST=World, C=WW`.
+* Get a token using the newly created client:
+
+```
+curl --cacert server-cert.pem --cert server-keystore.p12 -v --data "username=admin&password=admin&grant_type=password" https://localhost:8443/auth/realms/master/protocol/openid-connect/token\?client_id\=test
+```
+
+or 
+
+```
+curl --cacert server-cert.pem --cert server-keystore.p12 -v --data "client_id=test&username=admin&password=admin&grant_type=password" https://localhost:8443/auth/realms/master/protocol/openid-connect/token
+```
+
+That's it!
